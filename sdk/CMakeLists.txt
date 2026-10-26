@@ -86,6 +86,3 @@ target_link_libraries(${PROJECT_NAME}
         sol2
         tomlplusplus::tomlplusplus
 )
-
-# --- Game Content --- #
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/IronHullContent.cmake)

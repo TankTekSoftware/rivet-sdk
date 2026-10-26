@@ -48,3 +48,5 @@ add_project(${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui imgui)
 add_project(${CMAKE_CURRENT_SOURCE_DIR}/vendor/lua lua)
 
 add_project(${CMAKE_CURRENT_SOURCE_DIR}/sdk/ rivetsdk)
+
+add_project(${CMAKE_CURRENT_SOURCE_DIR}/examples/pong/ pong)
