@@ -28,6 +28,12 @@ if(MINGW)
     set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 endif()
 
+# raylib's GLFW and PhysFS both compile Objective-C sources on macOS. GLFW only enables OBJC in its
+# own directory, so PhysFS's .m file would have no build rules; enabling it here covers every project.
+if(APPLE)
+    enable_language(OBJC)
+endif()
+
 # --- Configure Output Directory --- #
 string(TOLOWER "${PLATFORM}" PLATFORM_DIR)
 string(TOLOWER "${CMAKE_BUILD_TYPE}" BUILD_TYPE)
