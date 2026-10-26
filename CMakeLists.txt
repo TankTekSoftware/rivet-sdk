@@ -5,7 +5,9 @@ project(Rivet)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(COMPILE_COMMANDS_TOP ${CMAKE_SOURCE_DIR}/compile_commands.json)
 
-if(NOT TARGET export_compile_commands_top)
+# Only the Ninja and Makefile generators write compile_commands.json; the Xcode generator used for
+# iOS doesn't, so there is nothing to copy there.
+if(NOT TARGET export_compile_commands_top AND CMAKE_GENERATOR MATCHES "Ninja|Makefiles")
     add_custom_target(export_compile_commands_top ALL
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${CMAKE_BINARY_DIR}/compile_commands.json

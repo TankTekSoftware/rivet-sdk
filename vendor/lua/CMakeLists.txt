@@ -23,6 +23,9 @@ set_target_properties(${PROJECT_NAME} PROPERTIES C_STANDARD 99 C_STANDARD_REQUIR
 
 if(UNIX AND NOT APPLE)
     target_compile_definitions(${PROJECT_NAME} PRIVATE LUA_USE_LINUX)
+elseif(IOS)
+    # As LUA_USE_MACOSX, except os.execute() doesn't call system(), which iOS doesn't have.
+    target_compile_definitions(${PROJECT_NAME} PRIVATE LUA_USE_IOS)
 elseif(APPLE)
     target_compile_definitions(${PROJECT_NAME} PRIVATE LUA_USE_MACOSX)
 endif()

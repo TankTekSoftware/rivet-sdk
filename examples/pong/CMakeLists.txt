@@ -13,3 +13,8 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC
         RivetSDK
 )
+
+rivet_configure_app(${PROJECT_NAME}
+    BUNDLE_ID "com.tanktek.pong"
+    DISPLAY_NAME "Rivet Pong"
+)

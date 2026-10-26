@@ -28,7 +28,7 @@ class PongApp : public Rivet::Application
         void on_render(Rivet::RenderPass pass) override
         {
             if (pass == Rivet::RenderPass::SCREEN) {
-                ::DrawFPS(2, 2);
+                ::DrawFPS(24, 24);
             }
         }
 

@@ -5,12 +5,83 @@ project(RivetSDK)
 include(FetchContent)
 
 message(STATUS "Fetching raylib...")
+# raylib's own CMake only has the desktop backends (pointed at iOS, it still picks desktop OpenGL).
+# On iOS, SOURCE_SUBDIR names a folder without a CMakeLists.txt, so the sources are fetched but
+# raylib's project isn't added, and the library is built with the iOS backend below instead.
+if(IOS)
+    set(RAYLIB_FETCH_OPTIONS SOURCE_SUBDIR "projects/Xcode27")
+endif()
 FetchContent_Declare(
     raylib
     GIT_REPOSITORY "https://github.com/ghera/raylib-iOS.git"
     GIT_TAG "6.2.0-iOS"
+    ${RAYLIB_FETCH_OPTIONS}
 )
 FetchContent_MakeAvailable(raylib)
+
+if(IOS)
+    # Linking ANGLE's .xcframeworks needs CMake 3.28, and embedding and signing them in the app
+    # needs the Xcode generator (the ios-* presets use it).
+    if(CMAKE_VERSION VERSION_LESS 3.28 OR NOT CMAKE_GENERATOR STREQUAL "Xcode")
+        message(FATAL_ERROR "iOS builds need CMake 3.28 or newer and the Xcode generator.")
+    endif()
+
+    # The same sources and settings as the fork's projects/Xcode27 project.
+    set(RAYLIB_SRC ${raylib_SOURCE_DIR}/src)
+    add_library(raylib STATIC
+        ${RAYLIB_SRC}/rcore.c
+        ${RAYLIB_SRC}/rshapes.c
+        ${RAYLIB_SRC}/rtextures.c
+        ${RAYLIB_SRC}/rtext.c
+        ${RAYLIB_SRC}/rmodels.c
+        ${RAYLIB_SRC}/raudio.c
+    )
+
+    # rcore.c includes the UIKit backend (platforms/rcore_ios.c), and raudio.c's miniaudio drives
+    # AVAudioSession, so both are compiled as Objective-C.
+    set_source_files_properties(${RAYLIB_SRC}/rcore.c ${RAYLIB_SRC}/raudio.c
+        PROPERTIES
+            LANGUAGE OBJC
+    )
+
+    # The backend relies on ARC. rlgl.h includes ANGLE's GLES/glext.h before the header that
+    # defines its types, which only compiles when the include imports the framework as a module.
+    set_target_properties(raylib PROPERTIES
+        XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC YES
+        XCODE_ATTRIBUTE_CLANG_ENABLE_MODULES YES
+    )
+
+    target_include_directories(raylib
+        PUBLIC
+            ${RAYLIB_SRC}
+    )
+
+    # PUBLIC like the platform and graphics defines of raylib's own CMake, so that
+    # Rivet/EntryPoint.hpp can tell which platform it's on.
+    target_compile_definitions(raylib
+        PUBLIC
+            PLATFORM_IOS
+            GRAPHICS_API_OPENGL_ES3
+        PRIVATE
+            GL_GLEXT_PROTOTYPES
+    )
+
+    # OpenGL ES comes from ANGLE, which runs it on Metal; the fork ships it prebuilt. Linking the
+    # .xcframeworks lets Xcode pick the device or simulator slice, and rivet_configure_app()
+    # embeds them in the app.
+    target_link_libraries(raylib
+        PUBLIC
+            ${raylib_SOURCE_DIR}/deps/ANGLE/libEGL.xcframework
+            ${raylib_SOURCE_DIR}/deps/ANGLE/libGLESv2.xcframework
+            "-framework UIKit"
+            "-framework QuartzCore"
+            "-framework CoreGraphics"
+            "-framework Foundation"
+            "-framework CoreFoundation"
+            "-framework AVFoundation"
+            "-framework AudioToolbox"
+    )
+endif()
 
 message(STATUS "Fetching physfs...")
 set(PHYSFS_BUILD_SHARED OFF CACHE BOOL "" FORCE)
@@ -86,3 +157,6 @@ target_link_libraries(${PROJECT_NAME}
         sol2
         tomlplusplus::tomlplusplus
 )
+
+# --- App Packaging --- #
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/RivetApp.cmake)

@@ -28,7 +28,62 @@
                 "PLATFORM": "Desktop",
                 "CMAKE_POLICY_VERSION_MINIMUM": "3.25"
             }
-        }    
+        },
+        {
+            "name": "ios",
+            "hidden": true,
+            "generator": "Xcode",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "toolchainFile": "${sourceDir}/cmake/ios.cmake",
+            "cacheVariables": {
+                "PLATFORM": "iOS",
+                "CMAKE_POLICY_VERSION_MINIMUM": "3.25",
+                "CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM": "$env{RIVET_IOS_DEVELOPMENT_TEAM}"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Darwin"
+            }
+        },
+        {
+            "name": "ios-debug",
+            "displayName": "iOS Device (Debug)",
+            "inherits": "ios",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_OSX_SYSROOT": "iphoneos"
+            }
+        },
+        {
+            "name": "ios-release",
+            "displayName": "iOS Device (Release)",
+            "inherits": "ios",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_OSX_SYSROOT": "iphoneos"
+            }
+        },
+        {
+            "name": "ios-simulator-debug",
+            "displayName": "iOS Simulator (Debug)",
+            "inherits": "ios",
+            "cacheVariables": {
+                "PLATFORM": "iOS-Simulator",
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_OSX_SYSROOT": "iphonesimulator"
+            }
+        },
+        {
+            "name": "ios-simulator-release",
+            "displayName": "iOS Simulator (Release)",
+            "inherits": "ios",
+            "cacheVariables": {
+                "PLATFORM": "iOS-Simulator",
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_OSX_SYSROOT": "iphonesimulator"
+            }
+        }
     ],
     "buildPresets": [
         {
@@ -38,7 +93,42 @@
         {
             "name": "desktop-release",
             "configurePreset": "desktop-release"
-        }    
+        },
+        {
+            "name": "ios",
+            "hidden": true,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Darwin"
+            }
+        },
+        {
+            "name": "ios-debug",
+            "inherits": "ios",
+            "configurePreset": "ios-debug",
+            "configuration": "Debug",
+            "nativeToolOptions": ["-allowProvisioningUpdates"]
+        },
+        {
+            "name": "ios-release",
+            "inherits": "ios",
+            "configurePreset": "ios-release",
+            "configuration": "Release",
+            "nativeToolOptions": ["-allowProvisioningUpdates"]
+        },
+        {
+            "name": "ios-simulator-debug",
+            "inherits": "ios",
+            "configurePreset": "ios-simulator-debug",
+            "configuration": "Debug"
+        },
+        {
+            "name": "ios-simulator-release",
+            "inherits": "ios",
+            "configurePreset": "ios-simulator-release",
+            "configuration": "Release"
+        }
     ]
 
 }
