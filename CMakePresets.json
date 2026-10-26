@@ -37,8 +37,7 @@
             "toolchainFile": "${sourceDir}/cmake/ios.cmake",
             "cacheVariables": {
                 "PLATFORM": "iOS",
-                "CMAKE_POLICY_VERSION_MINIMUM": "3.25",
-                "CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM": "$env{RIVET_IOS_DEVELOPMENT_TEAM}"
+                "CMAKE_POLICY_VERSION_MINIMUM": "3.25"
             },
             "condition": {
                 "type": "equals",

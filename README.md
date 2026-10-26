@@ -31,14 +31,20 @@ cmake --build --preset=ios-simulator-debug --target run_Pong
 
 ### Device
 
-Before a device build can be installed, it has to be signed by your development team. Set your team ID (shown in Xcode > Settings > Accounts) before configuring:
+iOS only installs builds signed by a development team. Give CMake your team ID (shown in Xcode > Settings > Accounts) when you configure, either as an environment variable or with `-D`:
 
 ```sh
 export RIVET_IOS_DEVELOPMENT_TEAM=ABCDE12345
 make PRESET=ios-debug
 ```
 
-Then open `out/build/ios-debug/Rivet.xcodeproj` and run the `Pong` scheme on your device. Without a team, device builds still compile, but they are left unsigned and can't be installed.
+The build tree remembers the team, so it only has to be given once per tree, and Xcode manages the certificate and provisioning profile. Then open `out/build/ios-debug/Rivet.xcodeproj` and run the `Pong` scheme on your device. A team picked in Xcode's Signing & Capabilities editor also works, but only until CMake regenerates the project.
+
+Without a team, device builds stop with "Signing for "Pong" requires a development team". To only check that they compile, build them unsigned:
+
+```sh
+cmake --build --preset=ios-debug -- CODE_SIGNING_ALLOWED=NO
+```
 
 ### Making a game an iOS app
 

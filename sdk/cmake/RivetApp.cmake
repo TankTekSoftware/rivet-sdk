@@ -1,3 +1,12 @@
+# The Apple development team that signs iOS device builds. The environment variable of the same
+# name wins when it's set; otherwise the build tree keeps the last value, so it's only given once.
+if(IOS)
+    set(RIVET_IOS_DEVELOPMENT_TEAM "" CACHE STRING "Apple development team ID that signs iOS device builds")
+    if(DEFINED ENV{RIVET_IOS_DEVELOPMENT_TEAM})
+        set_property(CACHE RIVET_IOS_DEVELOPMENT_TEAM PROPERTY VALUE "$ENV{RIVET_IOS_DEVELOPMENT_TEAM}")
+    endif()
+endif()
+
 # rivet_configure_app(<target> BUNDLE_ID <id> [DISPLAY_NAME <name>])
 #
 # Packages a game executable the way its platform runs it. On iOS that is an app bundle, with an
@@ -37,6 +46,7 @@ function(rivet_configure_app target)
         MACOSX_BUNDLE_SHORT_VERSION_STRING ${APP_VERSION}
         MACOSX_BUNDLE_BUNDLE_VERSION ${APP_VERSION}
         XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER ${APP_BUNDLE_ID}
+        XCODE_ATTRIBUTE_CODE_SIGN_STYLE Automatic
         XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "1,2" # iPhone and iPad
         XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@executable_path/Frameworks"
         XCODE_EMBED_FRAMEWORKS "${EMBEDDED_FRAMEWORKS}"
@@ -46,14 +56,16 @@ function(rivet_configure_app target)
         XCODE_GENERATE_SCHEME ON
     )
 
-    # Installing on a device needs a build signed by a development team. Without one, device builds
-    # are left unsigned, which still shows that they build. Simulator builds are signed locally.
-    if(NOT CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM)
-        set_property(TARGET ${target} PROPERTY "XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED[sdk=iphoneos*]" NO)
-
-        if(NOT CMAKE_OSX_SYSROOT MATCHES "[Ss]imulator")
-            message(STATUS "${target}: RIVET_IOS_DEVELOPMENT_TEAM is not set, so device builds are unsigned")
-        endif()
+    # iOS only installs device builds signed by a development team; Xcode manages the certificate
+    # and provisioning profile for it. Simulator builds are signed locally and need no team.
+    if(RIVET_IOS_DEVELOPMENT_TEAM)
+        set_property(TARGET ${target} PROPERTY XCODE_ATTRIBUTE_DEVELOPMENT_TEAM ${RIVET_IOS_DEVELOPMENT_TEAM})
+    elseif(NOT CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM AND NOT CMAKE_OSX_SYSROOT MATCHES "[Ss]imulator")
+        message(WARNING
+            "${target} can't be signed for devices without a development team. Configure again with "
+            "RIVET_IOS_DEVELOPMENT_TEAM set to your team ID (Xcode > Settings > Accounts), either "
+            "as an environment variable or with -DRIVET_IOS_DEVELOPMENT_TEAM=<team ID>."
+        )
     endif()
 
     if(CMAKE_OSX_SYSROOT MATCHES "[Ss]imulator")

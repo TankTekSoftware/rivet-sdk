@@ -19,14 +19,24 @@ if [ -z "$device" ]; then
     device=$(xcrun simctl list devices available | grep "iPhone" | grep -oE "$uuid" | tail -n 1)
 fi
 if [ -z "$device" ]; then
-    echo "error: no iPhone simulator is available; add one in Xcode > Window > Devices and Simulators." >&2
+    echo "error: no iPhone simulator is available; create one in Xcode first." >&2
     exit 1
 fi
 
 xcrun simctl bootstatus "$device" -b
-open -a Simulator --args -CurrentDeviceUDID "$device"
+
+# Show the simulator, in DeviceHub.app from Xcode 27 on, or in Simulator.app before that.
+developer_dir=${DEVELOPER_DIR:-$(xcode-select -p)}
+if [ -d "$developer_dir/../Applications/DeviceHub.app" ]; then
+    open "$developer_dir/../Applications/DeviceHub.app"
+elif [ -d "$developer_dir/Applications/Simulator.app" ]; then
+    open "$developer_dir/Applications/Simulator.app" --args -CurrentDeviceUDID "$device"
+else
+    echo "warning: found no app in Xcode that shows simulators; $bundle_id runs without a window." >&2
+fi
 
 xcrun simctl install "$device" "$app"
+: > "$log" # simctl appends, and the log should only hold this run
 xcrun simctl launch --terminate-running-process --stdout="$log" --stderr="$log" "$device" "$bundle_id"
 
 echo "Launched $bundle_id. Its output goes to $log"
