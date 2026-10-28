@@ -1,7 +1,7 @@
 #include <RivetPong/objects/PlayerPaddle.hpp>
 
 PlayerPaddle::PlayerPaddle()
-    : Paddle(GetScreenHeight() - 40.0f, 600.0f)
+    : Paddle(GetScreenHeight() - 128.0f, 600.0f)
 {
 }
 

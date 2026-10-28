@@ -2,7 +2,7 @@
 
 // The AI is slower than the ball moves sideways, so a well-angled shot can get past it.
 AIPaddle::AIPaddle(const Ball* ball)
-    : Paddle(40.0f, 250.0f)
+    : Paddle(128.0f, 512.0f)
 {
     this->ball = ball;
 }
