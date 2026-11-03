@@ -45,6 +45,7 @@ namespace Rivet
             static void set_vsync(bool vsync);
         public: // --- LIFE CYCLE --- //
             static void compose();
+            static void update();
             static void dispose();
             static bool should_close();
     }; 

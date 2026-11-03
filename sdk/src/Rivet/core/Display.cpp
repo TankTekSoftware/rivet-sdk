@@ -184,6 +184,26 @@ namespace Rivet
 
         // Creates the window and assigns the result to `self.ready`
         self.ready = self.create();
+
+        // The platform can create the window at a different size than requested (eg. iOS
+        //      always fills the screen), so start from the size the window actually has.
+        Display::update();
+    }
+
+    void Display::update()
+    {
+        Display& self = Display::get_singleton();
+
+        // RUNTIME GUARD: This function should only be able to run when
+        //      the display is currently active (eg. the window is opened).
+        if (!self.ready) {
+            return;
+        }
+
+        // The window can change size without going through `set_size()` (eg. a resizable
+        //      window, or rotating an iPhone/iPad), so keep the stored size in step with it.
+        self.width = static_cast<unsigned int>(GetScreenWidth());
+        self.height = static_cast<unsigned int>(GetScreenHeight());
     }
 
     void Display::dispose()

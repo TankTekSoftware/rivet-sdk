@@ -23,8 +23,9 @@ namespace Rivet
     {
         // UNUSED PARAMETERS: This parameter is required by some platforms (eg. iOS), but
         //      is unused by Rivet.
-        (void)view_size_changed;   
+        (void)view_size_changed;
 
+        Display::update();
         this->update();
         this->render();
     }
