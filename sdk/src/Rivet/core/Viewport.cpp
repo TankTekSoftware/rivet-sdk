@@ -2,6 +2,8 @@
 
 #include <Rivet/core/Display.hpp>
 
+#include <Rivet/render/Renderer.hpp>
+
 #include <raylib.h>
 
 #include <cmath>
@@ -9,6 +11,12 @@
 
 namespace Rivet
 {
+    struct Viewport::Impl
+    {
+        RenderTexture2D target = { };
+        Rectangle dest = { };
+    };
+
     Viewport& Viewport::get_singleton()
     {
         static Viewport singleton;
@@ -31,10 +39,10 @@ namespace Rivet
         this->width = width;
         this->height = height;
         this->pixel_filter = false;
+        this->integer_scaling = false;
 
-        // Assign
-        this->target = { };
-        this->dest = { }; 
+        // Allocate the backend state.
+        this->impl = std::make_unique<Impl>();
 
         this->ready = false;
     }
@@ -106,10 +114,12 @@ namespace Rivet
             return;
         }
 
-        self.target = LoadRenderTexture(self.width, self.height);
-        if (self.is_pixel_filter) {
-            SetTextureFilter(self.target.texture, TEXTURE_FILTER_POINT);
+        self.impl->target = LoadRenderTexture(self.width, self.height);
+        if (self.pixel_filter) {
+            SetTextureFilter(self.impl->target.texture, TEXTURE_FILTER_POINT);
         }
+
+        self.ready = true;
     }
 
     void Viewport::update()
@@ -129,7 +139,7 @@ namespace Rivet
             scale = std::floorf(scale);
         }
 
-        self.dest = {
+        self.impl->dest = {
             (display_width - self.width * scale) * 0.5f,
             (display_height - self.height * scale) * 0.5f,
             self.width * scale,
@@ -147,7 +157,9 @@ namespace Rivet
             return;
         }
 
-        UnloadRenderTexture(self.target);
+        UnloadRenderTexture(self.impl->target);
+
+        self.ready = false;
     }
 
     void Viewport::begin()
@@ -159,8 +171,8 @@ namespace Rivet
             return;
         }
 
-        BeginTextureMode(self.target);   
-        ClearBackground(BLACK);
+        BeginTextureMode(self.impl->target);
+        Renderer::clear();
     }
 
     void Viewport::end()
@@ -188,13 +200,13 @@ namespace Rivet
             0.0f,                               // x
             0.0f,                               // y
             static_cast<float>(self.width),     // width
-            static_cast<float>(self.height)     // height
+            -static_cast<float>(self.height)     // height
         };
 
         const Vector2 origin = { 0.0f, 0.0f };
-        const  float rotation = 0.0f;
-        const Color tint = WHITE;
+        const float rotation = 0.0f;
+        const ::Color tint = ::WHITE;
 
-        DrawTexturePro(self.target.texture, source, self.dest, origin, rotation, tint);
+        DrawTexturePro(self.impl->target.texture, source, self.impl->dest, origin, rotation, tint);
     }
 }

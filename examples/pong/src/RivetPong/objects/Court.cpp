@@ -22,23 +22,25 @@ void Court::render(Rivet::RenderPass pass)
         return;
     }
 
-    const float display_width = static_cast<float>(GetScreenWidth());
-    const float display_height = static_cast<float>(GetScreenHeight());
+    const float viewport_width = static_cast<float>(Rivet::Viewport::get_width());
+    const float viewport_height = static_cast<float>(Rivet::Viewport::get_height());
 
-    DrawLineV({ 0.0f, display_height / 2.0f }, { display_width, display_height / 2.0f }, WHITE);
+    const float line_thickness = 2.0f;
+    DrawLineEx({ 0.0f, viewport_height / 2.0f }, { viewport_width, viewport_height / 2.0f }, line_thickness, WHITE);
 
     // The opponent defends the top half of the court, and the player the bottom half.
-    this->render_score(this->opponent_score, display_height * 0.25f);
-    this->render_score(this->player_score, display_height * 0.75f);
+    this->render_score(this->opponent_score, viewport_height * 0.25f);
+    this->render_score(this->player_score, viewport_height * 0.75f);
 }
 
 void Court::render_score(int score, float center_y)
 {
-    const int font_size = 120;
+    const int font_size = 240;
     const Color color = { 255, 255, 255, 50 };
 
     const char* text = TextFormat("%i", score);
-    const int x = (GetScreenWidth() - MeasureText(text, font_size)) / 2;
+    const int viewport_width = static_cast<int>(Rivet::Viewport::get_width());
+    const int x = (viewport_width - MeasureText(text, font_size)) / 2;
     const int y = static_cast<int>(center_y) - font_size / 2;
 
     DrawText(text, x, y, font_size, color);

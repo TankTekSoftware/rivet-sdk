@@ -56,4 +56,5 @@ add_project(${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui imgui)
 
 add_project(${CMAKE_CURRENT_SOURCE_DIR}/sdk/ rivetsdk)
 
+add_project(${CMAKE_CURRENT_SOURCE_DIR}/examples/basic_window/ basic_window)
 add_project(${CMAKE_CURRENT_SOURCE_DIR}/examples/pong/ pong)

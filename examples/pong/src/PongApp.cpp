@@ -48,7 +48,7 @@ class PongApp : public Rivet::Application
                 this->court->add_player_point();
                 this->ball->reset();
             }
-            else if (ball_y > GetScreenHeight()) {
+            else if (ball_y > static_cast<float>(Rivet::Viewport::get_height())) {
                 this->court->add_opponent_point();
                 this->ball->reset();
             }
@@ -57,6 +57,7 @@ class PongApp : public Rivet::Application
         void on_render(Rivet::RenderPass pass) override
         {
             if (pass == Rivet::RenderPass::VIEWPORT) {
+                Rivet::Renderer::clear(0.0f, 0.0f, 0.0f);
                 this->court->render(pass);
                 this->ball->render(pass);
                 this->player->render(pass);

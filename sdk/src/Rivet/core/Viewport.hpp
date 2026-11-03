@@ -1,8 +1,6 @@
 #pragma once
 
-// TODO: This include should be removed later.
-//      RenderTexture2D and Rectangle needs to be abstracted to a Rivet class.
-#include <raylib.h>
+#include <memory>
 
 namespace Rivet
 {
@@ -17,8 +15,8 @@ namespace Rivet
             bool integer_scaling;
         private:
             bool ready;
-            RenderTexture2D target;
-            Rectangle dest;
+            struct Impl;
+            std::unique_ptr<Impl> impl;
         private:
             Viewport();
         public:

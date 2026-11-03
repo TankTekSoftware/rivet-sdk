@@ -4,6 +4,7 @@
 #include <Rivet/core/Display.hpp>
 #include <Rivet/core/Viewport.hpp>
 
+#include <Rivet/render/Color.hpp>
 #include <Rivet/render/Renderer.hpp>
 #include <Rivet/render/RenderPass.hpp>
 

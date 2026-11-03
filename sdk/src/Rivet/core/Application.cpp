@@ -50,6 +50,8 @@ namespace Rivet
 
     void Application::render()
     {
+        Viewport::update();
+
         Viewport::begin();
         {
             // RENDER PASS: This render pass is used for game elements or for anything that needs
@@ -86,6 +88,6 @@ namespace Rivet
             this->tick(false);
         }
 
-        this->on_dispose();
+        this->destroy();
     }
 }
