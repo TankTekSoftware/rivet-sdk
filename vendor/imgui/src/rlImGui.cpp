@@ -121,7 +121,9 @@ static void ImGuiNewFrame(float deltaTime)
 
     Vector2 resolutionScale = GetDisplayScale();
 
-#ifndef PLATFORM_DRM
+// RIVET: Android is always fullscreen, but raylib's Android backend has no monitor functions (they
+//      log a warning and give 0). Its screen is the whole display there, as with DRM.
+#if !defined(PLATFORM_DRM) && !defined(PLATFORM_ANDROID)
     if (IsWindowFullscreen())
     {
         int monitor = GetCurrentMonitor();
@@ -141,6 +143,11 @@ static void ImGuiNewFrame(float deltaTime)
 #else
     io.DisplaySize.x = float(GetScreenWidth());
     io.DisplaySize.y = float(GetScreenHeight());
+#if defined(PLATFORM_ANDROID)
+    // RIVET: raylib's Android screen units are pixels already, so nothing scales between them and
+    //      the framebuffer. Fonts are still sized by the screen's density (rlImGuiBeginInitImGui).
+    resolutionScale = Vector2{ 1, 1 };
+#endif
 #endif
 
     io.DisplayFramebufferScale = ImVec2(resolutionScale.x, resolutionScale.y);

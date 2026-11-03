@@ -39,6 +39,13 @@ endif()
 # --- Configure Output Directory --- #
 string(TOLOWER "${PLATFORM}" PLATFORM_DIR)
 string(TOLOWER "${CMAKE_BUILD_TYPE}" BUILD_TYPE)
+
+# raylib only builds its Android backend when PLATFORM is exactly "Android", so emulator builds are
+# told apart by RIVET_ANDROID_EMULATOR instead (see cmake/android.cmake).
+if(ANDROID AND RIVET_ANDROID_EMULATOR)
+    string(APPEND PLATFORM_DIR "-emulator")
+endif()
+
 set(BIN_DIR ${CMAKE_SOURCE_DIR}/bin/${PLATFORM_DIR}-${BUILD_TYPE})
 
 # Adds a project that builds into bin/<platform>-<build type>/<name>/, so the content deployed

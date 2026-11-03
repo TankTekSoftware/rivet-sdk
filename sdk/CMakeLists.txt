@@ -5,9 +5,10 @@ project(RivetSDK)
 include(FetchContent)
 
 message(STATUS "Fetching raylib...")
-# raylib's own CMake only has the desktop backends (pointed at iOS, it still picks desktop OpenGL).
-# On iOS, SOURCE_SUBDIR names a folder without a CMakeLists.txt, so the sources are fetched but
-# raylib's project isn't added, and the library is built with the iOS backend below instead.
+# raylib's own CMake has the desktop and Android backends (PLATFORM picks one), but not the iOS
+# one (pointed at iOS, it still picks desktop OpenGL). On iOS, SOURCE_SUBDIR names a folder without
+# a CMakeLists.txt, so the sources are fetched but raylib's project isn't added, and the library is
+# built with the iOS backend below instead.
 if(IOS)
     set(RAYLIB_FETCH_OPTIONS SOURCE_SUBDIR "projects/Xcode27")
 endif()
@@ -18,6 +19,13 @@ FetchContent_Declare(
     ${RAYLIB_FETCH_OPTIONS}
 )
 FetchContent_MakeAvailable(raylib)
+
+if(ANDROID)
+    # NativeActivity starts the game through ANativeActivity_onCreate(), from the NDK's native app
+    # glue that raylib builds in. Nothing calls it from inside the game's library, so the linker
+    # has to be told to keep it; raylib's CMake only does that for raylib's own shared library.
+    target_link_options(raylib INTERFACE "LINKER:-u,ANativeActivity_onCreate")
+endif()
 
 if(IOS)
     # Linking ANGLE's .xcframeworks needs CMake 3.28, and embedding and signing them in the app

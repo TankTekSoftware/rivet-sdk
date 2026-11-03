@@ -82,6 +82,51 @@
                 "CMAKE_BUILD_TYPE": "Release",
                 "CMAKE_OSX_SYSROOT": "iphonesimulator"
             }
+        },
+        {
+            "name": "android",
+            "hidden": true,
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "toolchainFile": "${sourceDir}/cmake/android.cmake",
+            "cacheVariables": {
+                "PLATFORM": "Android",
+                "CMAKE_POLICY_VERSION_MINIMUM": "3.25"
+            }
+        },
+        {
+            "name": "android-debug",
+            "displayName": "Android Device (Debug)",
+            "inherits": "android",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "android-release",
+            "displayName": "Android Device (Release)",
+            "inherits": "android",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "android-emulator-debug",
+            "displayName": "Android Emulator (Debug)",
+            "inherits": "android",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "RIVET_ANDROID_EMULATOR": "ON"
+            }
+        },
+        {
+            "name": "android-emulator-release",
+            "displayName": "Android Emulator (Release)",
+            "inherits": "android",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "RIVET_ANDROID_EMULATOR": "ON"
+            }
         }
     ],
     "buildPresets": [
@@ -127,6 +172,22 @@
             "inherits": "ios",
             "configurePreset": "ios-simulator-release",
             "configuration": "Release"
+        },
+        {
+            "name": "android-debug",
+            "configurePreset": "android-debug"
+        },
+        {
+            "name": "android-release",
+            "configurePreset": "android-release"
+        },
+        {
+            "name": "android-emulator-debug",
+            "configurePreset": "android-emulator-debug"
+        },
+        {
+            "name": "android-emulator-release",
+            "configurePreset": "android-emulator-release"
         }
     ]
 

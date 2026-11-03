@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    AndroidManifest.xml for Rivet Android apps. rivet_configure_app() fills in the APP_ values.
+    The app has no Java code: Android's own NativeActivity loads the game's library, and raylib's
+    Android backend (platforms/rcore_android.c) runs the game in it.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="@APP_BUNDLE_ID@"
+    android:versionCode="@APP_VERSION_CODE@"
+    android:versionName="@APP_VERSION@">
+
+    <uses-sdk
+        android:minSdkVersion="@APP_MIN_SDK@"
+        android:targetSdkVersion="@APP_TARGET_SDK@" />
+
+    <!-- raylib renders with OpenGL ES 3.0. -->
+    <uses-feature android:glEsVersion="0x00030000" android:required="true" />
+
+    <!-- Being a game also keeps Android 16 and later from ignoring the activity's orientation on
+         tablets and foldables, as they do for other apps. -->
+    <application
+        android:label="@APP_DISPLAY_NAME@"
+        android:hasCode="false"
+        android:appCategory="game"
+        android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+
+        <!-- raylib's Android backend can't follow the window as it changes size, so the activity
+             is held in one orientation, isn't resizable, and handles configuration changes
+             itself: if Android recreated it, the game would start over. singleTask keeps a
+             second copy of the activity, which would share raylib's state, from starting. -->
+        <activity
+            android:name="android.app.NativeActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="@APP_SCREEN_ORIENTATION@"
+            android:resizeableActivity="false"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation|uiMode|density|fontScale|locale|layoutDirection">
+            <meta-data android:name="android.app.lib_name" android:value="@APP_LIB_NAME@" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
