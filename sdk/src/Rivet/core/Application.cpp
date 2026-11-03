@@ -3,13 +3,9 @@
 #include <Rivet/core/Viewport.hpp>
 
 #include <Rivet/render/Renderer.hpp>
-
-#include <Rivet/utils/System.hpp>
 #include <Rivet/utils/Time.hpp>
 
 #include <rlImGui.h>
-#include <imgui.h>
-#include <raylib.h>
 
 namespace Rivet
 {
@@ -55,28 +51,30 @@ namespace Rivet
     void Application::render()
     {
         Viewport::begin();
-        
-        // RENDER PASS: This render pass is used for game elements or for anything that needs
-        //      to be scaled with the game.
-        this->on_render(RenderPass::VIEWPORT);
-        
+        {
+            // RENDER PASS: This render pass is used for game elements or for anything that needs
+            //      to be scaled with the game.
+            this->on_render(RenderPass::VIEWPORT);
+        }
         Viewport::end();
 
         // --- SCREEN DRAWING --- //
         Renderer::begin();
-        
-        Viewport::render();
+        {
+            Viewport::render();
+            
+            // RENDER PASS: This render pass is used for anything
+            //      that should be drawn directly to the screen.
+            this->on_render(RenderPass::SCREEN);
 
-        // RENDER PASS: This render pass is used for anything
-        //      that should be drawn directly to the screen.
-        this->on_render(RenderPass::SCREEN);
-
-        // RENDER PASS: This render pass is primary used for debugging.
-        //      This is where the ImGui windows are drawn.
-        rlImGuiBegin();
-            this->on_render(RenderPass::IMGUI);
-        rlImGuiEnd();
-
+            // RENDER PASS: This render pass is primary used for debugging.
+            //      This is where the ImGui windows are drawn.
+            rlImGuiBegin();
+            {
+                this->on_render(RenderPass::IMGUI);
+            }
+            rlImGuiEnd();
+        }
         Renderer::end();
     }
 
