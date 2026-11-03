@@ -15,6 +15,6 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 rivet_configure_app(${PROJECT_NAME}
-    BUNDLE_ID "com.tanktek.pong"
+    BUNDLE_ID "com.tankteksoftware.pong"
     DISPLAY_NAME "Rivet Pong"
 )

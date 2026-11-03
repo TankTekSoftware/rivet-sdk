@@ -63,7 +63,19 @@ namespace Rivet
         return self.title;
     }
 
-    bool Display::get_vsync()
+    bool Display::is_fullscreen()
+    {
+        Display& self = Display::get_singleton();
+        return self.fullscreen;
+    }
+
+    bool Display::is_resizable()
+    {
+        Display& self = Display::get_singleton();
+        return self.resizable;
+    }
+
+    bool Display::is_vsync()
     {
         Display& self = Display::get_singleton();
         return self.vsync;
@@ -97,10 +109,46 @@ namespace Rivet
         }
     }
 
+    void Display::set_fullscreen(bool fullscreen)
+    {
+        Display& self = Display::get_singleton();
+        self.fullscreen = fullscreen;
+
+        if (self.ready) {
+            if (self.fullscreen) {
+                SetWindowState(FLAG_FULLSCREEN_MODE);
+            } else {
+                ClearWindowState(FLAG_FULLSCREEN_MODE);
+            }
+        }
+    }
+
+    void Display::set_resizable(bool resizable)
+    {
+        Display& self = Display::get_singleton();
+        self.resizable = resizable;
+
+        if (self.ready) {
+            if (self.resizable) {
+                SetWindowState(FLAG_WINDOW_RESIZABLE);
+            } else {
+                ClearWindowState(FLAG_WINDOW_RESIZABLE);
+            }
+        }
+    }
+ 
     void Display::set_vsync(bool vsync)
     {
         Display& self = Display::get_singleton();
         self.vsync = vsync;
+
+        if (self.ready) {
+            if (self.vsync) {
+                SetWindowState(FLAG_VSYNC_HINT);
+            } else {
+                ClearWindowState(FLAG_VSYNC_HINT);
+            }
+        }
     }
 
     // --- LIFE CYCLE --- //
@@ -122,10 +170,17 @@ namespace Rivet
             self.flags |= FLAG_FULLSCREEN_MODE;
         }
 
+        if (self.fullscreen) {
+            self.flags |= FLAG_FULLSCREEN_MODE;
+        }
+
+        if (self.resizable) {
+            self.flags |= FLAG_WINDOW_RESIZABLE;
+        }
+
         if (self.vsync) {
             self.flags |= FLAG_VSYNC_HINT;
         }
-
 
         // Creates the window and assigns the result to `self.ready`
         self.ready = self.create();

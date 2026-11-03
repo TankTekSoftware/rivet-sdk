@@ -1,8 +1,7 @@
 #include <RivetPong/objects/AIPaddle.hpp>
 
 // The AI is slower than the ball moves sideways, so a well-angled shot can get past it.
-AIPaddle::AIPaddle(const Ball* ball)
-    : Paddle(128.0f, 512.0f)
+AIPaddle::AIPaddle(const Ball* ball) : Paddle(128.0f, 400.0f)
 {
     this->ball = ball;
 }
