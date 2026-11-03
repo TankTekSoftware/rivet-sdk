@@ -33,14 +33,19 @@ namespace Rivet
             static unsigned int get_width();
             static unsigned int get_height();
             static std::string get_title();
-            static bool get_vsync();
+            static bool is_fullscreen();
+            static bool is_resizable();
+            static bool is_vsync();
             static bool is_ready();
         public: // --- SETTERS --- //
             static void set_size(unsigned int width, unsigned int height);
             static void set_title(const std::string& title);
+            static void set_fullscreen(bool fullscreen);
+            static void set_resizable(bool resizable);
             static void set_vsync(bool vsync);
         public: // --- LIFE CYCLE --- //
             static void compose();
+            static void update();
             static void dispose();
             static bool should_close();
     }; 

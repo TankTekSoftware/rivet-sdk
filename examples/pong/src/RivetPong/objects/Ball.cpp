@@ -7,10 +7,10 @@ Ball::Ball()
 {
     this->reset();
 
-    this->velocity.x = 300.0f;
-    this->velocity.y = 200.0;
+    this->velocity.x = 600.0f;
+    this->velocity.y = 400.0f;
 
-    this->radius = 8.0f;
+    this->radius = 16.0f;
 }
 
 Vector2 Ball::get_position() const
@@ -28,7 +28,7 @@ Vector2 Ball::get_velocity() const
 
 void Ball::update(float delta)
 {
-    const float display_width = static_cast<float>(GetScreenWidth());
+    const float viewport_width = static_cast<float>(Rivet::Viewport::get_width());
 
     this->position.x += this->velocity.x * this->speed_multiplier * delta;
     this->position.y += this->velocity.y * this->speed_multiplier * delta;
@@ -39,8 +39,8 @@ void Ball::update(float delta)
         this->position.x = this->radius;
         this->velocity.x = -this->velocity.x;
     }
-    else if (this->position.x + this->radius > display_width) {
-        this->position.x = display_width - this->radius;
+    else if (this->position.x + this->radius > viewport_width) {
+        this->position.x = viewport_width - this->radius;
         this->velocity.x = -this->velocity.x;
     }
 }
@@ -51,7 +51,11 @@ void Ball::render(Rivet::RenderPass pass)
         return;
     }
 
-    DrawCircleLinesV(this->position, this->radius, WHITE);
+    // A 2px ring rather than a 1px circle outline, so the outline survives the viewport being
+    //      scaled down to the window.
+    const float line_thickness = 2.0f;
+
+    DrawRing(this->position, this->radius - line_thickness, this->radius, 0.0f, 360.0f, 0, WHITE);
 }
 
 void Ball::bounce_off(Rectangle rect)
@@ -81,8 +85,8 @@ void Ball::bounce_off(Rectangle rect)
 
 void Ball::reset()
 {
-    this->position.x = GetScreenWidth() / 2.0f;
-    this->position.y = GetScreenHeight() / 2.0f;
+    this->position.x = Rivet::Viewport::get_width() / 2.0f;
+    this->position.y = Rivet::Viewport::get_height() / 2.0f;
 
     // Each serve starts back at the base speed.
     this->speed_multiplier = 1.0f;

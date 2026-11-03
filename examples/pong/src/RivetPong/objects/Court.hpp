@@ -2,6 +2,8 @@
 
 #include <Rivet.hpp>
 
+#include <raylib.h>
+
 class Court
 {
     private:

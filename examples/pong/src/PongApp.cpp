@@ -16,11 +16,20 @@ class PongApp : public Rivet::Application
     protected:
         void on_compose() override
         {
+            Rivet::Renderer::set_default_clear_color(0.1f, 0.1f, 0.1f);
+
             Rivet::Display::set_title("Rivet Pong");
             Rivet::Display::set_size(360, 640);
+            Rivet::Display::set_resizable(true);
             Rivet::Display::set_vsync(true);
 
+            // The court is always 720 wide, and grows taller so phones taller than 9:16 don't get
+            //      bars. Screens wider than 9:16 get bars on the sides instead, since a wider court
+            //      would move the walls the ball bounces off.
             Rivet::Viewport::set_size(720, 1280);
+            Rivet::Viewport::set_stretch_mode(Rivet::StretchMode::CANVAS_ITEMS);
+            Rivet::Viewport::set_stretch_aspect(Rivet::StretchAspect::KEEP_WIDTH);
+            Rivet::Viewport::set_stretch_scale(1.0f);
             Rivet::Viewport::set_integer_scaling(false);
             Rivet::Viewport::set_pixel_filter(false);
         }
@@ -48,7 +57,7 @@ class PongApp : public Rivet::Application
                 this->court->add_player_point();
                 this->ball->reset();
             }
-            else if (ball_y > GetScreenHeight()) {
+            else if (ball_y > static_cast<float>(Rivet::Viewport::get_height())) {
                 this->court->add_opponent_point();
                 this->ball->reset();
             }
@@ -57,6 +66,7 @@ class PongApp : public Rivet::Application
         void on_render(Rivet::RenderPass pass) override
         {
             if (pass == Rivet::RenderPass::VIEWPORT) {
+                Rivet::Renderer::clear(0.0f, 0.0f, 0.0f);
                 this->court->render(pass);
                 this->ball->render(pass);
                 this->player->render(pass);

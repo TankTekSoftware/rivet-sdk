@@ -3,13 +3,9 @@
 #include <Rivet/core/Viewport.hpp>
 
 #include <Rivet/render/Renderer.hpp>
-
-#include <Rivet/utils/System.hpp>
 #include <Rivet/utils/Time.hpp>
 
 #include <rlImGui.h>
-#include <imgui.h>
-#include <raylib.h>
 
 namespace Rivet
 {
@@ -27,7 +23,12 @@ namespace Rivet
     {
         // UNUSED PARAMETERS: This parameter is required by some platforms (eg. iOS), but
         //      is unused by Rivet.
-        (void)view_size_changed;   
+        (void)view_size_changed;
+
+        // The viewport is laid out against the display's new size before the game updates, so
+        //      the game always sees the viewport size that this frame is drawn at.
+        Display::update();
+        Viewport::update();
 
         this->update();
         this->render();
@@ -55,28 +56,30 @@ namespace Rivet
     void Application::render()
     {
         Viewport::begin();
-        
-        // RENDER PASS: This render pass is used for game elements or for anything that needs
-        //      to be scaled with the game.
-        this->on_render(RenderPass::VIEWPORT);
-        
+        {
+            // RENDER PASS: This render pass is used for game elements or for anything that needs
+            //      to be scaled with the game.
+            this->on_render(RenderPass::VIEWPORT);
+        }
         Viewport::end();
 
         // --- SCREEN DRAWING --- //
         Renderer::begin();
-        
-        Viewport::render();
+        {
+            Viewport::render();
+            
+            // RENDER PASS: This render pass is used for anything
+            //      that should be drawn directly to the screen.
+            this->on_render(RenderPass::SCREEN);
 
-        // RENDER PASS: This render pass is used for anything
-        //      that should be drawn directly to the screen.
-        this->on_render(RenderPass::SCREEN);
-
-        // RENDER PASS: This render pass is primary used for debugging.
-        //      This is where the ImGui windows are drawn.
-        rlImGuiBegin();
-            this->on_render(RenderPass::IMGUI);
-        rlImGuiEnd();
-
+            // RENDER PASS: This render pass is primary used for debugging.
+            //      This is where the ImGui windows are drawn.
+            rlImGuiBegin();
+            {
+                this->on_render(RenderPass::IMGUI);
+            }
+            rlImGuiEnd();
+        }
         Renderer::end();
     }
 
@@ -88,6 +91,6 @@ namespace Rivet
             this->tick(false);
         }
 
-        this->on_dispose();
+        this->destroy();
     }
 }
