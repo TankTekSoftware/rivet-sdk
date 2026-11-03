@@ -5,8 +5,11 @@
 
 extern Rivet::Application* Rivet::create_application();
 
-#if defined(PLATFORM_DESKTOP)
+#if defined(PLATFORM_DESKTOP) || defined(PLATFORM_ANDROID)
 
+// PLATFORM ENTRY: On Android, raylib's backend (platforms/rcore_android.c) owns the entry point
+//      that NativeActivity starts, `android_main()`, and calls this `main()` from it, so the game
+//      loop runs just as it does on desktop.
 int main(int argc, char* argv[])
 {
     Rivet::Application* app = Rivet::create_application();

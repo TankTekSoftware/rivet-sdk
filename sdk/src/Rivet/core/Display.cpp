@@ -162,9 +162,12 @@ namespace Rivet
             return;
         }
 
-        // PLATFORM CHECK: These are settings that need to be overridden when
-        //      the platform is iOS (eg. iPhone/iPad).
-        if (System::get_os_name() == "ios") {
+        // PLATFORM CHECK: These are settings that need to be overridden on mobile platforms
+        //      (eg. iPhone/iPad, Android phones/tablets), where the window always fills the screen.
+        //      A size of 0 has raylib draw at the screen's own resolution; on Android, any other size
+        //      is drawn at that size and then stretched over the screen.
+        const std::string_view os_name = System::get_os_name();
+        if (os_name == "ios" || os_name == "android") {
             self.width = 0;   
             self.height = 0;
             self.flags |= FLAG_FULLSCREEN_MODE;
