@@ -16,7 +16,7 @@ class PongApp : public Rivet::Application
     protected:
         void on_compose() override
         {
-            Rivet::Renderer::set_default_clear_color(1.0f, 0.0f, 0.0f);
+            Rivet::Renderer::set_default_clear_color(0.1f, 0.1f, 0.1f);
 
             Rivet::Display::set_title("Rivet Pong");
             Rivet::Display::set_size(360, 640);
