@@ -6,6 +6,17 @@
 
 namespace Rivet
 {
+    Renderer& Renderer::get_singleton()
+    {
+        static Renderer singleton;
+        return singleton;
+    }
+
+    Renderer::Renderer()
+    {
+        this->clear_color = Color();
+    }
+
     void Renderer::begin()
     {
         BeginDrawing();
@@ -17,9 +28,25 @@ namespace Rivet
         EndDrawing();
     }
 
+    void Renderer::set_default_clear_color(float r, float g, float b, float a)
+    {
+        Renderer& self = Renderer::get_singleton();
+        self.clear_color.r = r;
+        self.clear_color.g = g;
+        self.clear_color.b = b;
+        self.clear_color.a = a;
+    }
+
+    void Renderer::set_default_clear_color(const Color& color)
+    {
+        Renderer& self = Renderer::get_singleton();
+        self.clear_color = color;
+    }
+
     void Renderer::clear()
     {
-        Renderer::clear(Color(0.392f, 0.584f, 0.929f));
+        Renderer& self = Renderer::get_singleton();
+        Renderer::clear(self.clear_color);
     }
 
     void Renderer::clear(float r, float g, float b, float a)

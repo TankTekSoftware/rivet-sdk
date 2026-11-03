@@ -2,10 +2,12 @@
 
 #include <algorithm>
 
-Paddle::Paddle(float y, float speed)
+Paddle::Paddle(float center_offset, float speed)
 {
+    this->center_offset = center_offset;
+
     this->position.x = Rivet::Viewport::get_width() / 2.0f;
-    this->position.y = y;
+    this->follow_center();
 
     this->size.x = 160.0f;
     this->size.y = 24.0f;
@@ -30,6 +32,14 @@ void Paddle::render(Rivet::RenderPass pass)
     }
 
     DrawRectangleLinesEx(this->get_rect(), 2.0f, WHITE);
+}
+
+void Paddle::follow_center()
+{
+    // The viewport's height follows the screen's shape, so it changes when the window is resized
+    //      or the device is rotated. Placing the paddle from the center line rather than an edge
+    //      keeps both paddles the same distance apart at any size.
+    this->position.y = Rivet::Viewport::get_height() / 2.0f + this->center_offset;
 }
 
 void Paddle::move_toward(float target_x, float delta)

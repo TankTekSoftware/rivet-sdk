@@ -25,7 +25,11 @@ namespace Rivet
         //      is unused by Rivet.
         (void)view_size_changed;
 
+        // The viewport is laid out against the display's new size before the game updates, so
+        //      the game always sees the viewport size that this frame is drawn at.
         Display::update();
+        Viewport::update();
+
         this->update();
         this->render();
     }
@@ -51,8 +55,6 @@ namespace Rivet
 
     void Application::render()
     {
-        Viewport::update();
-
         Viewport::begin();
         {
             // RENDER PASS: This render pass is used for game elements or for anything that needs

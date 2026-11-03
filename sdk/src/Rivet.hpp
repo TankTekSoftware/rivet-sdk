@@ -2,6 +2,8 @@
 
 #include <Rivet/core/Application.hpp>
 #include <Rivet/core/Display.hpp>
+#include <Rivet/core/StretchAspect.hpp>
+#include <Rivet/core/StretchMode.hpp>
 #include <Rivet/core/Viewport.hpp>
 
 #include <Rivet/render/Color.hpp>
