@@ -1,6 +1,13 @@
 # Usage: make [build|configure|clean|rebuild] [PRESET=<preset>]
 
-PRESET ?= desktop-release
+# Without a preset, build the release preset for the computer make runs on.
+ifeq ($(OS),Windows_NT)
+    PRESET ?= windows-release
+else ifeq ($(shell uname -s),Darwin)
+    PRESET ?= macos-release
+else
+    PRESET ?= linux-release
+endif
 
 .DEFAULT_GOAL := build
 .PHONY: build configure clean rebuild

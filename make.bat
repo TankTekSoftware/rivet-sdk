@@ -1,7 +1,7 @@
 @echo off
 setlocal
 
-set PRESET=desktop-release
+set PRESET=windows-release
 if not "%~1"=="" set PRESET=%~1
 
 set TARGET=%~2
