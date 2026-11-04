@@ -134,6 +134,14 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(tomlplusplus)
 
+message(STATUS "Fetching sol2")
+FetchContent_Declare(
+    sol2
+    GIT_REPOSITORY "https://github.com/ThePhD/sol2.git"
+    GIT_TAG "v3.5.0"
+)
+FetchContent_MakeAvailable(sol2)
+
 file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c)
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
 
@@ -154,6 +162,8 @@ target_link_libraries(${PROJECT_NAME}
         box2d
         imgui
         tomlplusplus::tomlplusplus
+        sol2
+        lua
 )
 
 # --- App Packaging --- #
