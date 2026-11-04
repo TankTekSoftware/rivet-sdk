@@ -1,0 +1,6 @@
+if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+    set(CMAKE_C_COMPILER clang)
+    set(CMAKE_CXX_COMPILER clang++)
+else()
+    message(FATAL_ERROR "macos.cmake supports macOS hosts, not ${CMAKE_HOST_SYSTEM_NAME}.")
+endif()

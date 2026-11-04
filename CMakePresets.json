@@ -6,38 +6,115 @@
     },
     "configurePresets": [
         {
-            "name": "desktop-debug",
-            "displayName": "Desktop (Debug)",
-            "generator": "Ninja",
+            "name": "platform",
+            "hidden": true,
             "binaryDir": "${sourceDir}/out/build/${presetName}",
-            "toolchainFile": "${sourceDir}/cmake/desktop.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
-                "PLATFORM": "Desktop",
                 "CMAKE_POLICY_VERSION_MINIMUM": "3.25"
             }
         },
         {
-            "name": "desktop-release",
-            "displayName": "Desktop (Release)",
+            "name": "desktop",
+            "hidden": true,
+            "inherits": "platform",
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
-            "toolchainFile": "${sourceDir}/cmake/desktop.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
-                "PLATFORM": "Desktop",
-                "CMAKE_POLICY_VERSION_MINIMUM": "3.25"
+                "PLATFORM": "Desktop"
             }
         },
+
+        {
+            "name": "windows",
+            "hidden": true,
+            "inherits": "desktop",
+            "toolchainFile": "${sourceDir}/cmake/windows.cmake",
+            "condition": {
+                "type": "inList",
+                "string": "${hostSystemName}",
+                "list": ["Windows", "Linux"]
+            }
+        },
+        {
+            "name": "windows-debug",
+            "displayName": "Windows (Debug)",
+            "inherits": "windows",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "windows-release",
+            "displayName": "Windows (Release)",
+            "inherits": "windows",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+
+        {
+            "name": "linux",
+            "hidden": true,
+            "inherits": "desktop",
+            "toolchainFile": "${sourceDir}/cmake/linux.cmake",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "linux-debug",
+            "displayName": "Linux (Debug)",
+            "inherits": "linux",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "linux-release",
+            "displayName": "Linux (Release)",
+            "inherits": "linux",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+
+        {
+            "name": "macos",
+            "hidden": true,
+            "inherits": "desktop",
+            "toolchainFile": "${sourceDir}/cmake/macos.cmake",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Darwin"
+            }
+        },
+        {
+            "name": "macos-debug",
+            "displayName": "macOS (Debug)",
+            "inherits": "macos",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "macos-release",
+            "displayName": "macOS (Release)",
+            "inherits": "macos",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+
         {
             "name": "ios",
             "hidden": true,
+            "inherits": "platform",
             "generator": "Xcode",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
             "toolchainFile": "${sourceDir}/cmake/ios.cmake",
             "cacheVariables": {
-                "PLATFORM": "iOS",
-                "CMAKE_POLICY_VERSION_MINIMUM": "3.25"
+                "PLATFORM": "iOS"
             },
             "condition": {
                 "type": "equals",
@@ -83,15 +160,15 @@
                 "CMAKE_OSX_SYSROOT": "iphonesimulator"
             }
         },
+
         {
             "name": "android",
             "hidden": true,
+            "inherits": "platform",
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
             "toolchainFile": "${sourceDir}/cmake/android.cmake",
             "cacheVariables": {
-                "PLATFORM": "Android",
-                "CMAKE_POLICY_VERSION_MINIMUM": "3.25"
+                "PLATFORM": "Android"
             }
         },
         {
@@ -131,13 +208,65 @@
     ],
     "buildPresets": [
         {
-            "name": "desktop-debug",
-            "configurePreset": "desktop-debug"
+            "name": "windows",
+            "hidden": true,
+            "condition": {
+                "type": "inList",
+                "string": "${hostSystemName}",
+                "list": ["Windows", "Linux"]
+            }
         },
         {
-            "name": "desktop-release",
-            "configurePreset": "desktop-release"
+            "name": "windows-debug",
+            "inherits": "windows",
+            "configurePreset": "windows-debug"
         },
+        {
+            "name": "windows-release",
+            "inherits": "windows",
+            "configurePreset": "windows-release"
+        },
+
+        {
+            "name": "linux",
+            "hidden": true,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "linux-debug",
+            "inherits": "linux",
+            "configurePreset": "linux-debug"
+        },
+        {
+            "name": "linux-release",
+            "inherits": "linux",
+            "configurePreset": "linux-release"
+        },
+
+        {
+            "name": "macos",
+            "hidden": true,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Darwin"
+            }
+        },
+        {
+            "name": "macos-debug",
+            "inherits": "macos",
+            "configurePreset": "macos-debug"
+        },
+        {
+            "name": "macos-release",
+            "inherits": "macos",
+            "configurePreset": "macos-release"
+        },
+
         {
             "name": "ios",
             "hidden": true,
@@ -173,6 +302,7 @@
             "configurePreset": "ios-simulator-release",
             "configuration": "Release"
         },
+
         {
             "name": "android-debug",
             "configurePreset": "android-debug"
@@ -190,5 +320,4 @@
             "configurePreset": "android-emulator-release"
         }
     ]
-
 }

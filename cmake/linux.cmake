@@ -1,0 +1,6 @@
+if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+    set(CMAKE_C_COMPILER gcc)
+    set(CMAKE_CXX_COMPILER g++)
+else()
+    message(FATAL_ERROR "linux.cmake supports Linux hosts, not ${CMAKE_HOST_SYSTEM_NAME}.")
+endif()

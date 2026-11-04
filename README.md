@@ -6,8 +6,19 @@ A C++ game sdk, for cross-platform development
 Builds use the CMake presets, either directly or through the Makefile (`make.bat` on Windows):
 
 ```sh
-make PRESET=desktop-release
+make PRESET=linux-debug
+make.bat windows-debug
 ```
+
+Without a preset, `make` builds the release preset for the computer it runs on, and `make.bat` builds `windows-release`.
+
+| Presets | Build for | Build on |
+| --- | --- | --- |
+| `windows-debug`, `windows-release` | Windows 10/11 | Windows, or Linux with MinGW-w64 |
+| `linux-debug`, `linux-release` | Linux | Linux |
+| `macos-debug`, `macos-release` | macOS | macOS |
+
+CMake only lists the presets that the computer it runs on can build (`cmake --list-presets`).
 
 Each preset builds into `bin/<preset>/`.
 
