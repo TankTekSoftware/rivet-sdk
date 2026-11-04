@@ -64,4 +64,8 @@ add_project(${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui imgui)
 
 add_project(${CMAKE_CURRENT_SOURCE_DIR}/sdk/ rivetsdk)
 
+# After the SDK, whose cmake/RivetApp.cmake defines the rivet_add_executable() the runtime
+# is added with.
+add_project(${CMAKE_CURRENT_SOURCE_DIR}/runtime/ rivetruntime)
+
 add_project(${CMAKE_CURRENT_SOURCE_DIR}/examples/pong-cpp/ pong)

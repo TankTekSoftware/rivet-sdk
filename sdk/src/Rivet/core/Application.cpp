@@ -9,6 +9,18 @@
 
 namespace Rivet
 {
+    Application* Application::instance = nullptr;
+
+    void Application::quit()
+    {
+        Application::instance->running = false;
+    }
+
+    Application::Application()
+    {
+        this->running = false;
+    }
+
     void Application::create()
     {
         this->on_compose();
@@ -85,9 +97,12 @@ namespace Rivet
 
     void Application::run()
     {
+        Application::instance = this;
+        this->running = true;
+
         this->create();
 
-        while (!Display::should_close()) {
+        while (!Display::should_close() && this->running) {
             this->tick(false);
         }
 

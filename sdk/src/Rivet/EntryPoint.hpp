@@ -2,6 +2,7 @@
 
 #include <Rivet/core/Application.hpp>
 #include <Rivet/core/Display.hpp>
+#include <Rivet/utils/System.hpp>
 
 extern Rivet::Application* Rivet::create_application();
 
@@ -12,6 +13,10 @@ extern Rivet::Application* Rivet::create_application();
 //      loop runs just as it does on desktop.
 int main(int argc, char* argv[])
 {
+    // The arguments are kept before the application is made, so `on_compose()` can read them
+    //      (eg. the runtime takes the game to run as one).
+    Rivet::System::set_args(argc, argv);
+
     Rivet::Application* app = Rivet::create_application();
     app->run();
     delete app;

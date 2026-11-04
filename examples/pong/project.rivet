@@ -1,0 +1,21 @@
+[general]
+name = "Pong"
+entry = "main.lua"
+
+[display]
+width = 360
+height = 640
+resizable = true
+vsync = true
+
+# The court is always 720 wide, and grows taller so phones taller than 9:16 don't get bars.
+# Screens wider than 9:16 get bars on the sides instead, since a wider court would move the
+# walls the ball bounces off.
+[viewport]
+width = 720
+height = 1280
+stretch_mode = "canvas_items"
+stretch_aspect = "keep_width"
+stretch_scale = 1.0
+integer_scaling = false
+pixel_filter = false

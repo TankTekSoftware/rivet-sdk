@@ -142,6 +142,14 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(sol2)
 
+message(STATUS "Fetching nativefiledialog...")
+FetchContent_Declare(
+    nfd
+    GIT_REPOSITORY "https://github.com/btzy/nativefiledialog-extended.git"
+    GIT_TAG "v1.3.0"
+)
+FetchContent_MakeAvailable(nfd)
+
 file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c)
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
 
@@ -156,7 +164,7 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC SOL_ALL_SAFETIES_ON=1)
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
-        raylib
+        raylib                          # Backend 
         PhysFS::PhysFS-static
         box3d
         box2d
@@ -164,6 +172,7 @@ target_link_libraries(${PROJECT_NAME}
         tomlplusplus::tomlplusplus
         sol2
         lua
+        nfd
 )
 
 # --- App Packaging --- #

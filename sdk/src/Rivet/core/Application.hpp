@@ -6,6 +6,14 @@ namespace Rivet
 {
     class Application
     {
+        private:
+            static Application* instance;
+        public:
+            static void quit();
+        public:
+            Application();
+        private:
+            bool running;
         public:
             void create();
             void tick(bool view_size_changed);

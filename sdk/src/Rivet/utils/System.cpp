@@ -2,6 +2,17 @@
 
 namespace Rivet
 {
+    System& System::get_singleton()
+    {
+        static System singleton;
+        return singleton;
+    }
+
+    System::System()
+    {
+
+    }
+
     std::string_view System::get_os_name()
     {
 #if defined(__EMSCRIPTEN__)
@@ -23,4 +34,21 @@ namespace Rivet
 #endif
     }
 
+    // --- COMMAND LINE --- //
+    const std::vector<std::string>& System::get_args()
+    {
+        System& self = System::get_singleton();
+        return self.args;
+    }
+
+    void System::set_args(int argc, char* argv[])
+    {
+        System& self = System::get_singleton();
+        self.args.clear();
+
+        // The program's own name is argv[0], which isn't an argument the game was given.
+        for (int index = 1; index < argc; ++index) {
+            self.args.emplace_back(argv[index]);
+        }
+    }
 }
